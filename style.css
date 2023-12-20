@@ -68,7 +68,7 @@ header .airpod-navbar .nav-content {
   display: flex;
   justify-content: space-between;
 }
-
+/* 테스트 주석 */
 header .nav-logo a {
   color: #fefefe;
   font-weight: 600;
