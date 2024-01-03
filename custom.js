@@ -10,7 +10,6 @@
 
 //hero 섹션 높이 지정: 헤더 높이를 제외한 높이
 const headerHeight = document.querySelector("header").offsetHeight;
-console.log(headerHeight);
 
 const heroSection = document.querySelector(".section-01");
 
@@ -19,9 +18,86 @@ heroSection.style.marginTop = headerHeight + 50 + "px";
 // GSAP 효과 지정
 const imgObj = document.querySelector("#hero-lightpass");
 const mainText = document.querySelector(".main-elem");
+const msgText1 = document.querySelector(".msg-elem-01");
+const msgText2 = document.querySelector(".msg-elem-02");
+const msgText3 = document.querySelector(".msg-elem-03");
+const msgText4 = document.querySelector(".msg-elem-04");
+
+// image sequence setting
+
+const frameCount = 147;
+const images = [];
+const airpods = {
+  frame: 0,
+};
+
+//image 배열로 추출
+const currentFrame = (index) =>
+  `https://www.apple.com/105/media/us/airpods-pro/2019/1299e2f5_9206_4470_b28e_08307a42f19b/anim/sequence/large/01-hero-lightpass/${(
+    index + 1
+  )
+    .toString()
+    .padStart(4, "0")}.jpg`;
+
+for (let i = 0; i < frameCount; i++) {
+  images.push(currentFrame(i));
+}
+
+console.log(images);
 
 let t10 = gsap.timeline();
 t10
   .add("start0") //시작 지점 지정
   .fromTo(imgObj, { opacity: 0 }, { opacity: 1, duration: 2 }, "start0")
   .fromTo(mainText, { opacity: 0 }, { opacity: 1, duration: 2 }, "start0");
+
+//scrollMagic 효과 지정: 이미지 시퀀스 실행
+let tl1 = gsap.timeline();
+
+// 시퀀스 시작
+tl1
+  .add("start0")
+  .to(mainText, { opacity: 0, duration: 3, y: -500 }, "start0") // 마침표 없이 끝내서 효과를 연결시킨다.
+  .to(
+    airpods,
+    {
+      duration: 8,
+      frame: 140,
+      snap: "frame", //frame을 snap으로 지정하면, frame이 정수로만 존재하도록 강제.
+      ease: "none",
+      onUpdate: () => {
+        imgObj.setAttribute("src", images[airpods.frame]);
+      },
+    },
+    "start0"
+  )
+  .add("start1")
+  .to(msgText1, { duration: 4, opacity: 1, y: -50 }, "start1")
+  .to(msgText1, { duration: 4, opacity: 0, y: -100 })
+
+  .add("start2")
+  .to(msgText2, { duration: 4, opacity: 1, y: -50 }, "start2")
+  .to(msgText2, { duration: 4, opacity: 0, y: -100 })
+
+  .add("start3")
+  .to(msgText3, { duration: 4, opacity: 1, y: -50 }, "start3")
+  .to(msgText3, { duration: 4, opacity: 0, y: -100 })
+
+  .add("start4")
+  .to(msgText4, { duration: 4, opacity: 1, y: -50 }, "start4")
+  .to(msgText4, { duration: 4, opacity: 0, y: -100 })
+
+  .to(imgObj, { duration: 36, scale: 0.5, ease: Power1.easeIn }, "start0");
+
+//scrollMagic 효과 지정: 이미지 시퀀스 실행
+let controller = new ScrollMagic.Controller();
+
+let scene1 = new ScrollMagic.Scene({
+  triggerElement: ".section-01",
+  duration: "4000",
+  triggerHook: 0.1, // 0.1 = 10% 화면 끝에서 10% 내려왔을때 시작
+})
+  .setTween(tl1)
+  .setPin(".section-01")
+  .addTo(controller) //컨트롤러에 추가
+  .addIndicators(); // 효과를 확인하기 위한 인디케이터 추가
